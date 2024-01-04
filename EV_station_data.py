@@ -37,16 +37,22 @@ def caculate_price():
 
     # 计算24小时电费
     hourly_costs = [electric_prices[i] for i in range(24)]
-    print(hourly_costs)
     return hourly_costs
 
 
-hourly_costs = caculate_price()
-
-
 def generate_int_information(EVS_num):
+    EVS_coordinate = [(1, 2), (1, 4), (2, 1), (3, 3), (4, 1)]
+    hourly_costs = caculate_price()
+    int_infotmations = []
+
     for i in range(EVS_num):
         int_infotmation = {}
         int_infotmation["name"] = "EV_station" + str(i)
         int_infotmation["location"] = EVS_coordinate[i]
         int_infotmation["price"] = hourly_costs
+        int_infotmation["power_limit"] = 50
+        int_infotmation["num_of_charger"] = 200
+        int_infotmation["time_caculate"] = 24
+
+        int_infotmations.append(int_infotmation)
+    return int_infotmations

@@ -2,7 +2,7 @@
 Author: RichardM
 Date: 2023-12-06 19:55:46
 LastEditors: RichardM
-LastEditTime: 2024-01-03 17:35:05
+LastEditTime: 2024-01-04 19:21:14
 Description: 
 
 Copyright (c) 2024 by RichardM, All Rights Reserved. 
@@ -10,6 +10,7 @@ Copyright (c) 2024 by RichardM, All Rights Reserved.
 # This is a project for Electric Vehicle
 import numpy as np
 import mysort
+from EV_station_data import generate_int_information
 
 
 class EVstation(object):
@@ -25,13 +26,15 @@ class EVstation(object):
         self.num_of_charger = int_infotmation["num_of_charger"]
         self.charger_remain = self.num_of_charger
         self.occupy_state_charger = [[0 for _ in range(self.num_of_charger)]]
-        # self.tasks=[(remain_power,deadline,changer,cost),...]
+        # self.tasks=[[remain_power,deadline,changer,cost],...]
         self.tasks = []
-        # self.tasks = sorted(self.tasks, key=mysort.EDF)
+
         self.time_caculate = int_infotmation["time_caculate"]
         self.total_earn = 0
 
     def add_task(self, new_tasks):
+        if not new_tasks:
+            return
         for task in new_tasks:
             # add cost
             task[3] = self.EVS_price * task[0]
@@ -41,16 +44,17 @@ class EVstation(object):
                     # set the task's charger
                     task[2] = i
                     self.charger_remain -= 1
+                    self.tasks.append(task)
                     break
-        self.tasks = self.tasks.append(new_tasks)
+            print("error: no enough charger")
 
     def renew_state(self):
-        self.price = self.price.append(self.pop(0))
+        self.price.append(self.price.pop(0))
         self.occupy_state_charger.append(self.occupy_state_charger[-1])
         reward = 0
         # renew tasks
         for task in self.tasks:
-            # task=(remain_power,deadline,changer,cost)
+            # task=[remain_power,deadline,changer,cost]
             task[1] -= 1
             if task[1] == 0:
                 self.occupy_state_charger[-1][task[2]] = 0
@@ -61,6 +65,8 @@ class EVstation(object):
         return reward
 
     def caculate(self):
+        if not self.tasks:
+            return
         # sort the tasks by LLF_LD
         self.tasks = sorted(self.tasks, key=mysort.LLF_LD)
         # self.tasks = sorted(self.tasks, key=mysort.EDF)
@@ -70,7 +76,7 @@ class EVstation(object):
         # start caculate
         fake_price = self.price.copy()
         for task in self.tasks:
-            # task=(remain_power,deadline,changer,cost)
+            # task=[remain_power,deadline,changer,cost]
             (
                 remain_power,
                 deadline,
@@ -84,7 +90,7 @@ class EVstation(object):
                 # deal limit power
                 if self.power_remain[index] == 0:
                     task[1] += 1
-                    task[3] -= self.max_price * 3
+                    task[3] -= self.max_price * 2
                 else:
                     self.power[index] += 1
                     self.power_remain[index] -= 1

@@ -1,12 +1,3 @@
-"""
-Author: RichardM
-Date: 2023-12-07 19:32:59
-LastEditors: RichardM
-LastEditTime: 2023-12-11 17:30:43
-Description: 
-
-Copyright (c) 2023 by ${XJTU}, All Rights Reserved. 
-"""
 import csv
 import os
 import random
@@ -53,7 +44,7 @@ if __name__ == "__main__":
     hourly_y = creat_num(5)
     # 绘制曲线
     plt.plot(hourly_y[:24], "ro")
-    plt.xlabel("时间")
-    plt.ylabel("值")
-    plt.title("三个峰的正态分布")
+    plt.xlabel("time")
+    plt.ylabel("vale")
+    plt.title("EVs num in 24 hours")
     plt.show()

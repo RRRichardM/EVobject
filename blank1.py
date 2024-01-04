@@ -1,7 +1,5 @@
-def a():
+a = []
+if a:
     print("a")
-
-
-def b():
+else:
     print("b")
-    a()

@@ -1,12 +1,3 @@
-"""
-Author: RichardM
-Date: 2023-12-07 18:58:43
-LastEditors: RichardM
-LastEditTime: 2023-12-11 19:30:07
-Description: 
-
-Copyright (c) 2023 by ${XJTU}, All Rights Reserved. 
-"""
 import csv
 import os
 import random
@@ -23,6 +14,7 @@ def creat_data(days):
     nums = creat_num(days)
     id = 0
     for time, num in enumerate(nums):
+        num = round(num / 2)
         for i in range(num):
             timenow = time % 24
             ev_station = creat_ev_station()
@@ -53,9 +45,9 @@ if __name__ == "__main__":
         # 拼接完整的文件路径
 
     # 指定生成的 CSV 文件名和行数
-    filename = "dataset.csv"
+    filename = "dataset_one.csv"
     filepath = os.path.join("data", filename)
-    days = 5
+    days = 20
 
     # 生成 CSV 数据集
     generate_csv_dataset(filepath, days)
