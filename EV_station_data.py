@@ -1,12 +1,3 @@
-"""
-Author: RichardM
-Date: 2024-01-03 20:34:59
-LastEditors: RichardM
-LastEditTime: 2024-01-03 21:17:21
-Description: 
-
-Copyright (c) 2024 by RichardM, All Rights Reserved. 
-"""
 import csv
 import os
 import random
@@ -50,9 +41,10 @@ def generate_int_information(EVS_num):
         int_infotmation["name"] = "EV_station" + str(i)
         int_infotmation["location"] = EVS_coordinate[i]
         int_infotmation["price"] = hourly_costs
-        int_infotmation["power_limit"] = 50
-        int_infotmation["num_of_charger"] = 200
-        int_infotmation["time_caculate"] = 24
+        int_infotmation["power_limit"] = 10
+        int_infotmation["opt_state"] = 0
+        int_infotmation["num_of_charger"] = 20
+        int_infotmation["time_caculate"] = 48
 
         int_infotmations.append(int_infotmation)
     return int_infotmations

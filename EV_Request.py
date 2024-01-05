@@ -14,7 +14,8 @@ def creat_data(days):
     nums = creat_num(days)
     id = 0
     for time, num in enumerate(nums):
-        num = round(num / 2)
+        # 单站测试
+        num = round(num / 10)
         for i in range(num):
             timenow = time % 24
             ev_station = creat_ev_station()
@@ -45,9 +46,9 @@ if __name__ == "__main__":
         # 拼接完整的文件路径
 
     # 指定生成的 CSV 文件名和行数
-    filename = "dataset_one.csv"
+    filename = "dataset_one_30.csv"
     filepath = os.path.join("data", filename)
-    days = 20
+    days = 30
 
     # 生成 CSV 数据集
     generate_csv_dataset(filepath, days)
