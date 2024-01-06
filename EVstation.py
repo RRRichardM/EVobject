@@ -1,12 +1,3 @@
-"""
-Author: RichardM
-Date: 2023-12-06 19:55:46
-LastEditors: RichardM
-LastEditTime: 2024-01-04 19:21:14
-Description: 
-
-Copyright (c) 2024 by RichardM, All Rights Reserved. 
-"""
 # This is a project for Electric Vehicle
 import numpy as np
 import mysort
@@ -31,14 +22,19 @@ class EVstation(object):
         self.opt_state = int_infotmation["opt_state"]
 
         self.time_caculate = int_infotmation["time_caculate"]
+        self.waiting_list = []
         self.total_earn = 0
+        self.reward = 0
 
     def add_task(self, new_tasks):
         if not new_tasks:
-            return
+            return None
+        task_to_remove = []
         for task in new_tasks:
             # add cost
-            task[3] = self.EVS_price * task[0]
+            if task[3] == None:
+                task[3] = self.EVS_price * task[0]
+
             for i in range(self.num_of_charger):
                 if self.occupy_state_charger[-1][i] == 0:
                     self.occupy_state_charger[-1][i] = 1
@@ -46,15 +42,27 @@ class EVstation(object):
                     task[2] = i
                     self.charger_remain -= 1
                     self.tasks.append(task)
+                    task_to_remove.append(task)
                     break
-                if i == self.num_of_charger - 1:
-                    print("error: no enough charger")
+        for task in task_to_remove:
+            new_tasks.remove(task)
+        if new_tasks:
+            refuse_fee = 0
+            for task in new_tasks:
+                refuse_fee += task[3]
+            return refuse_fee
+        return None
 
     def renew_state(self):
         self.price.append(self.price.pop(0))
-        self.occupy_state_charger.append(self.occupy_state_charger[-1])
+        self.occupy_state_charger.append(self.occupy_state_charger[-1].copy())
         reward = 0
         task_to_remove = []
+        for task in self.waiting_list:
+            task[1] -= 1
+            if task[1] == 0:
+                task[3] -= self.EVS_price
+                task[1] += 1
         # renew tasks
         for task in self.tasks:
             task[1] -= 1

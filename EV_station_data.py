@@ -41,9 +41,9 @@ def generate_int_information(EVS_num):
         int_infotmation["name"] = "EV_station" + str(i)
         int_infotmation["location"] = EVS_coordinate[i]
         int_infotmation["price"] = hourly_costs
-        int_infotmation["power_limit"] = 10
-        int_infotmation["opt_state"] = 0
-        int_infotmation["num_of_charger"] = 20
+        int_infotmation["power_limit"] = 20
+        int_infotmation["opt_state"] = 2
+        int_infotmation["num_of_charger"] = 30
         int_infotmation["time_caculate"] = 48
 
         int_infotmations.append(int_infotmation)

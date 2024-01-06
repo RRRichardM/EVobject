@@ -1,12 +1,3 @@
-"""
-Author: RichardM
-Date: 2024-01-03 20:22:47
-LastEditors: RichardM
-LastEditTime: 2024-01-04 20:11:55
-Description: 
-
-Copyright (c) 2024 by RichardM, All Rights Reserved. 
-"""
 from EVstation import EVstation
 from EV_station_data import generate_int_information
 import os
@@ -24,7 +15,7 @@ def create_EVstation(EVS_num):
 
 if __name__ == "__main__":
     logging.basicConfig(filename=f"test1.log", level=logging.DEBUG)
-    EVstations = create_EVstation(1)
+    EVstations = create_EVstation(5)
     filename = "dataset_one_30.csv"
     filepath = os.path.join("data", filename)
     EV_requests = pd.read_csv(filepath)
@@ -51,8 +42,10 @@ if __name__ == "__main__":
                 )
                 data_start_index += 1
         # lack of assigning task to EVstation
+
         for EVstation in EVstations:
-            EVstation.add_task(EV_request)
+            EVstation.waiting_list.extend(EV_request)
+            EVstation.add_task(EVstation.waiting_list)
             EVstation.caculate()
             reward = EVstation.renew_state()
             logging.info(

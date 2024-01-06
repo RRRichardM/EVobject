@@ -1,7 +1,8 @@
-def a():
-    print("a")
+from datetime import datetime
+import logging
 
-
-def b():
-    print("b")
-    a()
+logging.basicConfig(
+    filename=f"EVSystem_{datetime.now().strftime('%Y%m%d%H%M%S')}.log",
+    level=logging.DEBUG,
+)
+logging.info("test")
