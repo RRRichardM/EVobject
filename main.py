@@ -15,7 +15,7 @@ def create_EVstation(EVS_num):
 
 if __name__ == "__main__":
     logging.basicConfig(filename=f"test1.log", level=logging.DEBUG)
-    EVstations = create_EVstation(5)
+    EVstations = create_EVstation(1)
     filename = "dataset_one_30.csv"
     filepath = os.path.join("data", filename)
     EV_requests = pd.read_csv(filepath)
@@ -44,8 +44,9 @@ if __name__ == "__main__":
         # lack of assigning task to EVstation
 
         for EVstation in EVstations:
-            EVstation.waiting_list.extend(EV_request)
-            EVstation.add_task(EVstation.waiting_list)
+            # EVstation.waiting_list.extend(EV_request)
+            # EVstation.add_task(EVstation.waiting_list)
+            EVstation.add_task(EV_request)
             EVstation.caculate()
             reward = EVstation.renew_state()
             logging.info(

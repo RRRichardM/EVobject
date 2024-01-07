@@ -17,13 +17,15 @@ class EVSystem(object):
         self.run_time = 0
         self.total_run_time = 24 * 30
         self.current_request = []
+        self.total_earn = 0
+        self.task_num = 0
         # log当前时间
         logging.basicConfig(
             filename=f"EVSystem_{datetime.now().strftime('%Y%m%d%H%M')}.log",
             level=logging.DEBUG,
         )
 
-    def create_EVstation(EVS_num):
+    def create_EVstation(self, EVS_num):
         int_infotmations = generate_int_information(EVS_num)
         EV_stations = []
         for int_infotmation in int_infotmations:
@@ -36,10 +38,7 @@ class EVSystem(object):
         EV_request = []
         current_time = self.run_time % 24
         while True:
-            if (
-                self.EV_requests.loc[self.data_start_index, "Time"] != current_time
-                or self.data_start_index >= self.total_run_time
-            ):
+            if self.EV_requests.loc[self.data_start_index, "Time"] != current_time:
                 break
             else:
                 # task=[remain_power,deadline,changer,cost]
@@ -52,20 +51,53 @@ class EVSystem(object):
                     ]
                 )
                 self.data_start_index += 1
+
         return EV_request
 
     def step_run(self, action):
         reward = 0
         self.current_request = self.creat_request()
+
+        # empty request
+        if not self.current_request:
+            for EVstation in self.EVstations:
+                EVstation.caculate()
+                reward += EVstation.renew_state()
+            self.run_time += 1
+            logging.info(
+                f"run_time:{self.run_time},reward:{reward},total_earn:{self.total_earn}"
+            )
+            return reward
+
         request = self.current_request[0]
         self.current_request.pop(0)
         refuse_fee = self.EVstations[action].add_task([request])
-        if refuse_fee != None:
-            reward -= refuse_fee
+        self.task_num += 1
+        # if refuse_fee != None:
+        #     reward -= refuse_fee
+
         #  all request has been assigned to EVstation
         if self.current_request == []:
             for EVstation in self.EVstations:
                 EVstation.caculate()
                 reward += EVstation.renew_state()
-        logging.info(f"run_time:{self.run_time},reward:{reward}")
+            self.run_time += 1
+        logging.info(
+            f"run_time:{self.run_time},reward:{reward},total_earn:{self.total_earn}"
+        )
         return reward
+
+
+if __name__ == "__main__":
+    EVSystem = EVSystem()  # Instantiate the EVSystem class
+    i = 0
+    while EVSystem.run_time < EVSystem.total_run_time:
+        reward = EVSystem.step_run(
+            i % EVSystem.EVS_num
+        )  # Call the step_run method with the appropriate argument
+        EVSystem.total_earn += reward
+        i += 1
+        print("run_time:", EVSystem.run_time)
+        print("total_earn:", EVSystem.total_earn)
+        print("reward:", reward)
+        print("task_num:", EVSystem.task_num)
