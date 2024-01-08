@@ -44,7 +44,7 @@ def generate_int_information(EVS_num):
         int_infotmation["power_limit"] = 20
         int_infotmation["opt_state"] = 2
         int_infotmation["num_of_charger"] = 30
-        int_infotmation["time_caculate"] = 48
+        int_infotmation["time_caculate"] = 24
 
         int_infotmations.append(int_infotmation)
     return int_infotmations

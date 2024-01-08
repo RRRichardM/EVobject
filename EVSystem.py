@@ -10,6 +10,8 @@ class EVSystem(object):
     def __init__(self, EVS_num=5):
         self.EVS_num = EVS_num
         self.EVstations = self.create_EVstation(self.EVS_num)
+        self.time_caculate = self.EVstations[0].time_caculate
+        self.power_limit = self.EVstations[0].power_limit
         self.filename = "dataset_one_30.csv"
         self.filepath = os.path.join("data", self.filename)
         self.EV_requests = pd.read_csv(self.filepath)
@@ -51,12 +53,12 @@ class EVSystem(object):
                     ]
                 )
                 self.data_start_index += 1
-
+        self.current_request = EV_request
         return EV_request
 
     def step_run(self, action):
         reward = 0
-        self.current_request = self.creat_request()
+        # self.current_request = self.creat_request()
 
         # empty request
         if not self.current_request:
@@ -72,6 +74,7 @@ class EVSystem(object):
         request = self.current_request[0]
         self.current_request.pop(0)
         refuse_fee = self.EVstations[action].add_task([request])
+        self.EVstations[action].caculate_just()
         self.task_num += 1
         # if refuse_fee != None:
         #     reward -= refuse_fee
@@ -92,6 +95,7 @@ if __name__ == "__main__":
     EVSystem = EVSystem()  # Instantiate the EVSystem class
     i = 0
     while EVSystem.run_time < EVSystem.total_run_time:
+        EVSystem.creat_request()
         reward = EVSystem.step_run(
             i % EVSystem.EVS_num
         )  # Call the step_run method with the appropriate argument

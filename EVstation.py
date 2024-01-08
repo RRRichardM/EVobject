@@ -25,6 +25,9 @@ class EVstation(object):
         self.waiting_list = []
         self.total_earn = 0
         self.reward = 0
+        self.remain_charge_state = 1
+        self.power = [0 for _ in range(self.time_caculate)]
+        self.power_remain = [self.power_limit for _ in range(self.time_caculate)]
 
     def add_task(self, new_tasks):
         if not new_tasks:
@@ -46,6 +49,11 @@ class EVstation(object):
                     break
         for task in task_to_remove:
             new_tasks.remove(task)
+        # check remain charge state
+        self.remain_charge_state = all(
+            item == 1 for item in self.occupy_state_charger[-1]
+        )
+
         if new_tasks:
             refuse_fee = 0
             for task in new_tasks:
@@ -136,3 +144,51 @@ class EVstation(object):
                         if index == 0:
                             task[0] -= 1
                             task[3] -= self.price[0]
+
+    def caculate_just(self):
+        if not self.tasks:
+            return
+        # sort the tasks by LLF_LD
+        if self.opt_state == 0:
+            self.power = [0 for _ in range(self.time_caculate)]
+            self.power_remain = [self.power_limit for _ in range(self.time_caculate)]
+            # start caculate
+            for task in self.tasks:
+                if self.power_remain[0] == 0:
+                    break
+                else:
+                    self.power[0] += 1
+                    self.power_remain[0] -= 1
+
+        elif self.opt_state == 1 or self.opt_state == 2:
+            if self.opt_state == 1:
+                # sort the tasks by EDF
+                self.tasks = sorted(self.tasks, key=mysort.EDF)
+            if self.opt_state == 2:
+                self.tasks = sorted(self.tasks, key=mysort.LLF_LD)
+            self.power = [0 for _ in range(self.time_caculate)]
+            self.power_remain = [self.power_limit for _ in range(self.time_caculate)]
+            # start caculate
+            fake_price = self.price.copy()
+            for task in self.tasks:
+                # task=[remain_power,deadline,changer,cost]
+                (
+                    remain_power,
+                    deadline,
+                    changer,
+                    cost,
+                ) = task
+                if remain_power == 0:
+                    continue
+                selected_periods = sorted(range(deadline), key=lambda i: fake_price[i])[
+                    :remain_power
+                ]
+                for index in selected_periods:
+                    # deal limit power
+                    if self.power_remain[index] == 0:
+                        continue
+                    else:
+                        self.power[index] += 1
+                        self.power_remain[index] -= 1
+                        if self.power_remain[index] == 0:
+                            fake_price[index] = self.max_price * 3
