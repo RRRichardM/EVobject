@@ -50,7 +50,7 @@ class EVstation(object):
         for task in task_to_remove:
             new_tasks.remove(task)
         # check remain charge state
-        self.remain_charge_state = all(
+        self.remain_charge_state = not all(
             item == 1 for item in self.occupy_state_charger[-1]
         )
 

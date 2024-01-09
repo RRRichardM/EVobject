@@ -17,15 +17,15 @@ class EVSystem(object):
         self.EV_requests = pd.read_csv(self.filepath)
         self.data_start_index = 0
         self.run_time = 0
-        self.total_run_time = 24 * 30
+        self.total_run_time = 24
         self.current_request = []
         self.total_earn = 0
         self.task_num = 0
-        # log当前时间
-        logging.basicConfig(
-            filename=f"EVSystem_{datetime.now().strftime('%Y%m%d%H%M')}.log",
-            level=logging.DEBUG,
-        )
+        # # log当前时间
+        # logging.basicConfig(
+        #     filename=f"EVSystem_{datetime.now().strftime('%Y%m%d%H%M')}.log",
+        #     level=logging.DEBUG,
+        # )
 
     def create_EVstation(self, EVS_num):
         int_infotmations = generate_int_information(EVS_num)
@@ -74,10 +74,12 @@ class EVSystem(object):
         request = self.current_request[0]
         self.current_request.pop(0)
         refuse_fee = self.EVstations[action].add_task([request])
+        if refuse_fee != None:
+            reward -= 100
+
+            return reward
         self.EVstations[action].caculate_just()
         self.task_num += 1
-        # if refuse_fee != None:
-        #     reward -= refuse_fee
 
         #  all request has been assigned to EVstation
         if self.current_request == []:
@@ -85,9 +87,10 @@ class EVSystem(object):
                 EVstation.caculate()
                 reward += EVstation.renew_state()
             self.run_time += 1
-        logging.info(
-            f"run_time:{self.run_time},reward:{reward},total_earn:{self.total_earn}"
-        )
+        # logging.info(
+        #     f"run_time:{self.run_time},reward:{reward},total_earn:{self.total_earn}"
+        # )
+        self.total_earn += reward
         return reward
 
 
@@ -99,7 +102,6 @@ if __name__ == "__main__":
         reward = EVSystem.step_run(
             i % EVSystem.EVS_num
         )  # Call the step_run method with the appropriate argument
-        EVSystem.total_earn += reward
         i += 1
         print("run_time:", EVSystem.run_time)
         print("total_earn:", EVSystem.total_earn)

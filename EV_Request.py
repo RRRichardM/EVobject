@@ -15,7 +15,7 @@ def creat_data(days):
     id = 0
     for time, num in enumerate(nums):
         # 单站测试
-        num = round(num)
+        num = round(num / 3)
         for i in range(num):
             timenow = time % 24
             ev_station = creat_ev_station()
