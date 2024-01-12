@@ -12,11 +12,10 @@ import logging
 
 # log当前时间
 logging.basicConfig(filename="test.log", level=logging.DEBUG)
-from gymnasium.wrappers import FlattenObservation
 
 
 class MyEnvironment(gym.Env):
-    def __init__(self, render_mode: Optional[str] = None):
+    def __init__(self, env_config, render_mode: Optional[str] = None):
         super(MyEnvironment, self).__init__()
         self.max_episode_steps: int = 24
         self.EVSystem = EVSystem(5)
