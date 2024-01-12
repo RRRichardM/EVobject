@@ -53,7 +53,7 @@ class EVSystem(object):
     def renew_state(self):
         EVSystem.total_earn = 0
         for EVstation in self.EVstations:
-            EVstation.step()
+            EVstation.renew_state()
             EVSystem.total_earn += EVstation.true_total_earn
 
 
