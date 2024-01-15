@@ -20,7 +20,7 @@ from tianshou.trainer import OffpolicyTrainer
 from tianshou.utils import TensorboardLogger
 from tianshou.utils.net.common import Net
 from tianshou.utils.net.discrete import Actor, Critic
-from env_EV import MyEnvironment
+from env_EVV2_0 import MyEnvironment
 from gymnasium.wrappers import FlattenObservation
 
 
@@ -38,7 +38,7 @@ def get_args():
     parser.add_argument("--alpha", type=float, default=0.05)
     parser.add_argument("--auto-alpha", action="store_true", default=False)
     parser.add_argument("--epoch", type=int, default=10)
-    parser.add_argument("--step-per-epoch", type=int, default=10000)
+    parser.add_argument("--step-per-epoch", type=int, default=20000)
     parser.add_argument("--step-per-collect", type=int, default=10)
     parser.add_argument("--update-per-step", type=float, default=0.1)
     parser.add_argument("--batch-size", type=int, default=1)

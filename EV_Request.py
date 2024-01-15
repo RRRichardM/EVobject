@@ -33,9 +33,9 @@ def generate_csv_dataset(filename, days):
 
         # 写入 CSV 文件的标题行
         writer.writerow(["ID", "Time", "EV_station", "Durable_time", "Charge_demand"])
-        data_lsit = creat_data(days)
+        data_list = creat_data(days)
         # 生成随机数据并写入 CSV 文件
-        for data in data_lsit:
+        for data in data_list:
             writer.writerow(data)
 
 

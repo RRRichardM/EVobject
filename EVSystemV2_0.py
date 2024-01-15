@@ -10,8 +10,10 @@ class EVSystem(object):
     def __init__(self, EVS_num=5):
         self.EVS_num = EVS_num
         self.EVstations = self.create_EVstation(self.EVS_num)
+        self.EVstations[0].EVS_price *= 4
         self.time_caculate = self.EVstations[0].time_caculate
         self.power_limit = self.EVstations[0].power_limit
+
         self.filename = "dataset_one_30.csv"
         self.filepath = os.path.join("data", self.filename)
         self.EV_requests = pd.read_csv(self.filepath)
@@ -21,6 +23,7 @@ class EVSystem(object):
         self.current_request = []
         self.total_earn = 0
         self.task_num = 0
+
         # # log当前时间
         # logging.basicConfig(
         #     filename=f"EVSystem_{datetime.now().strftime('%Y%m%d%H%M')}.log",
@@ -36,7 +39,7 @@ class EVSystem(object):
 
     def creat_task(self):
         if self.EV_requests.loc[self.data_start_index, "Time"] != self.run_time % 24:
-            return None, True
+            return [0, 0, 0, 0], True
         EV_request = [
             self.EV_requests.loc[self.data_start_index, "Charge_demand"],
             self.EV_requests.loc[self.data_start_index, "Durable_time"],
@@ -51,10 +54,11 @@ class EVSystem(object):
         return EV_request, renew_flag
 
     def renew_state(self):
-        EVSystem.total_earn = 0
+        self.total_earn = 0
+        self.run_time += 1
         for EVstation in self.EVstations:
             EVstation.renew_state()
-            EVSystem.total_earn += EVstation.true_total_earn
+            self.total_earn += EVstation.true_total_earn
 
 
 if __name__ == "__main__":
@@ -66,12 +70,15 @@ if __name__ == "__main__":
         if task:
             reward = EVSystem.EVstations[i].add_task(task)
         if renew_flag:
-            for EVstation in EVSystem.EVstations:
-                EVSystem.renew_state()
-            EVSystem.run_time += 1
+            EVSystem.renew_state()
 
         i += 1
-        i = i % EVSystem.EVS_num
+        i = i % 5
         print("run_time:", EVSystem.run_time)
+        print(
+            "remain_state",
+            [EVstation.remain_charge_state for EVstation in EVSystem.EVstations],
+        )
         print("total_earn:", EVSystem.total_earn)
+        print("renew", renew_flag)
         print("reward:", reward)

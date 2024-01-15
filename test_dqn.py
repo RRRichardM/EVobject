@@ -13,7 +13,7 @@ from tianshou.policy import DQNPolicy
 from tianshou.trainer import OffpolicyTrainer
 from tianshou.utils import TensorboardLogger
 from tianshou.utils.net.common import Net
-from env_EV import MyEnvironment
+from env_EVV2_0 import MyEnvironment
 from gymnasium.wrappers import FlattenObservation
 
 

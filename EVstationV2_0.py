@@ -10,7 +10,7 @@ class EVstation(object):
         self.location = int_infotmation["location"]
         self.price = int_infotmation["price"]
         self.max_price = max(self.price)
-        self.EVS_price = 2 * self.max_price
+        self.EVS_price = self.max_price
         self.power_limit = int_infotmation["power_limit"]
         self.power_log = []
         # self.chargerpower_limit = int_infotmation["chargerpower_limit"]
@@ -26,7 +26,7 @@ class EVstation(object):
         self.true_total_earn = 0
         self.fack_total_earn = 0
         self.reward = 0
-        self.remain_charge_state = 1
+        self.remain_charge_state = True
         self.power = [0 for _ in range(self.time_caculate)]
         self.power_remain = [self.power_limit for _ in range(self.time_caculate)]
 
@@ -46,6 +46,7 @@ class EVstation(object):
                 self.charger_remain -= 1
                 self.tasks.append(task)
                 break
+        else:
             refuse_fee = -100
             return refuse_fee
 
@@ -77,7 +78,7 @@ class EVstation(object):
                 continue
         for task in task_to_remove:
             self.tasks.remove(task)
-        return
+        return 0
 
     def caculate(self):
         if not self.tasks:
